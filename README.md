@@ -1,10 +1,10 @@
-# puli
+# PuliLab code sample
 
 > puli test code
 
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
 npm install
 
