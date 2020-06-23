@@ -26,6 +26,7 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    // filtered pictures
     fPics: state => {
       return state.pics.filter(pic => {
         let selected = true
@@ -38,17 +39,21 @@ export const store = new Vuex.Store({
         return selected
       }).slice(0, 12)
     },
+    // Get formated data for camera chart
     camData: state => {
       return state.camChr
     },
+    // Get formated data fro day chart
     dayData: state => {
       return state.dayChr
     },
+    // Selected filters for filtering fPics
     filters: state => {
       return state.filters
     }
   },
   mutations: {
+    // Format data for cameta chart
     camChrFormat: (state) => {
       let cams = []
 
@@ -63,6 +68,7 @@ export const store = new Vuex.Store({
         series: Object.values(cams)
       }
     },
+    // Format data for day chart
     dayChrFormat: (state) => {
       let days = []
 
@@ -77,18 +83,23 @@ export const store = new Vuex.Store({
         series: Object.values(days)
       }
     },
+    // Add day pictures array existing pictures to pictures array
     addPics: (state, pics) => {
       state.pics = [...state.pics, ...pics]
     },
+    // Clears pictures array
     clearPics: state => {
       state.pics = []
     },
+    // Sets filtering by day
     filterDay: (state, day) => {
       state.filters.date = state.dayChr.options.labels[day]
     },
+    // Sets filtering by camera
     filterCam: (state, cam) => {
       state.filters.cam = state.camChr.options.labels[cam]
     },
+    // Clears all filters
     clearFilters: state => {
       state.filters = {
         date: false,
@@ -106,10 +117,15 @@ export const store = new Vuex.Store({
     clearFilters: ctx => {
       ctx.commit('clearFilters')
     },
+    // Initial loading of pictures from API
     getData: ctx => {
       let mdate = new Date()
+
+      // Seting start day to 3 days ago.
+      // API was missing last 2 days of pictures
       mdate.setDate(mdate.getDate() - 3)
 
+      // Clearing current pics list
       ctx.commit('clearPics')
 
       // Api needs few calls for each day to fill 7 days period
@@ -123,6 +139,7 @@ export const store = new Vuex.Store({
           ctx.commit('camChrFormat')
           ctx.commit('dayChrFormat')
         } else {
+          // Get picture array from API
           axios.get('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=' + strDate + '&api_key=DEMO_KEY')
             .then(response => {
             // caching results
